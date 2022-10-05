@@ -9,6 +9,9 @@ Phenotype control example files
 - node_control_example.txt -- text file for node control, can save as an M2 file
 - SM_example.txt -- text file of Boolean rules for Stable Motif example
 - SM_example.py -- python file to run Stable Motifs
+- thesis_examples.m -- cumulative MATLAB file of examples
+- thesisTC1.txt -- time-course data for EQL example
+
 
 <br />
 
