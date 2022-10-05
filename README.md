@@ -2,7 +2,7 @@
 
 Attached in this repository are the code and data used in my doctoral thesis *Assembling an Integrated Pipeline to Construct Patient-Specific Cancer Models*[^1]. Specifically, you will find:
 
-Phenotype control example files
+Phenotype control example files:
 - ck_example.txt -- text file for Contol Kernel example expressions
 - edge_control_example.txt -- text file for edge control, can save as an M2 file
 - FVS_example.py -- python file to run Feedback Vertex Set control
@@ -15,10 +15,15 @@ Phenotype control example files
 
 <br />
 
-I have included *How-To* files that detail how to find controls and simulate 
+ *How-To* files that detail how to find controls and simulate:
 - How-To find controls
 - How-To simulate
 
+
+<br />
+
+Necessary MATLAB functions and files
+- INSERT
 
 <br />
 
