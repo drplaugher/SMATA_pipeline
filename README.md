@@ -27,7 +27,7 @@ Necessary MATLAB functions and files
 
 <br />
 
-For files specific to the pancreatic cancer chapters, see https://github.com/drplaugher/PCC_Mutations
+For files specific to the pancreatic cancer chapters, see https://github.com/drplaugher/PCC_Mutations. Some code/files have been adapted from previously published versions, and I have tried to make such notes within the relevent files. 
 
 
 <br />
