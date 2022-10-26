@@ -1,0 +1,171 @@
+-- Written by Daniel Plaugher 09/12/22, adapted from DM
+-- code is for Thesis CA node examples
+
+
+numvars=5;
+
+--### variables x and controls up=u+, um=u- ###
+X=apply(numvars,i->"x"|(i+1));
+UP=apply(numvars,i->"up"|(i+1));
+UM=apply(numvars,i->"um"|(i+1));
+
+
+--### define ring ###
+DEN=apply(join(X,UP,UM),v->v|"^2-"|v);
+R=ZZ/2[join(X,UP,UM)/value,MonomialOrder=>Lex]/ideal(DEN/value);
+X=X/value; UP=UP/value; UM=UM/value; 
+RingElement | RingElement :=(x,y)->x+y+x*y;
+RingElement & RingElement :=(x,y)->x*y;
+
+-----------------------------------------------------------------------
+--### define Boolean network ###
+f1 = 1+x3+x5+x3*x5;
+f2 = 1+x1+x1*x4;
+f3 = 1+x2;
+f4 = x3;
+f5 = 1+x4;
+
+--F=apply(numvars,i->"f"|(i+1));
+F = {f1 , f2 , f3 , f4 , f5}; 
+
+
+-- ### find fixed points, can comment out ###
+Ifp=ideal(F-X);
+GBfp=gens gb Ifp
+
+
+-----------------------------------------------------------------------
+-- ## define knockout/knockin to remove ###
+-- %%%%% use for thesis eq 4.10, otherwise  can SKIP %%%%%
+UP=delete(up1,UP); UP=insert(0,0,UP);
+UP=delete(up2,UP); UP=insert(1,0,UP);
+UP=delete(up5,UP); UP=insert(4,0,UP);
+
+UM=delete(um1,UM);UM=insert(0,0,UM);
+UM=delete(um3,UM);UM=insert(2,0,UM);
+UM=delete(um4,UM);UM=insert(3,0,UM);
+UM=delete(um5,UM);UM=insert(4,0,UM);
+
+
+-- ### define BN with control parameters ###
+Fcontrol=apply(numvars,k->(UP_k+UM_k+1)*F_k+UP_k);
+
+
+-----------------------------------------------------------------------
+-- ### create equations/set restrictions for region blocking ###
+-- %%%%% can use for thesis eq 4.7 %%%%%
+I=ideal( join(Fcontrol-X, {x1+1,x3+1, x4+1}));
+
+-- %%%%% use for thesis eq 4.10 %%%%%
+I=ideal( join(Fcontrol-X, {x3}));
+
+GB=gens gb I
+GB1=flatten entries GB
+
+
+-----------------------------------------------------------------------
+-- ### for creating a new fixed point ###
+-- %%%%% use for thesis eq 4.7 %%%%%
+GOODSTATE={{1,1,1,1,0}};
+EQNS3={}; 
+for k from 0 to #GOODSTATE-1 do (x:=GOODSTATE_k;
+    S:=apply(numvars,i->(X_i=>x_i));
+    Fcontrolx:=apply(Fcontrol,hi->sub(hi,S));
+    EQNS3=join(EQNS3,flatten(Fcontrolx-x));    
+); 
+EQNS3
+I3=ideal(EQNS3);
+GB1=gens gb I3
+
+
+-----------------------------------------------------------------------
+-- ### Find generators that only contain parameters ###
+EQUATIONS=select(GB1,P->(S:=support(P); set {}===(set S)*set(X) and P!=0));
+Ring2=ZZ/2[join(X,UP,UM)/value];
+CONTROLS=(EQUATIONS/toString/value)/factor;
+
+
+-- ### list all control policies ###
+toString toList CONTROLS
+
+
+
+
+
+
+
+######################################## ONLY KNOCK-IN ###############################################################
+numvars=5;
+--variables x and controls up=u+
+X=apply(numvars,i->"x"|(i+1));
+UP=apply(numvars,i->"up"|(i+1));
+
+-- define ring
+DEN=apply(join(X,UP),v->v|"^2-"|v);
+R=ZZ/2[join(X,UP)/value,MonomialOrder=>Lex]/ideal(DEN/value);
+X=X/value; UP=UP/value; 
+RingElement | RingElement :=(x,y)->x+y+x*y;
+RingElement & RingElement :=(x,y)->x*y;
+
+-----------------------------------------------------------------------
+-- ### define BN using functions above ###
+F = {f1 , f2 , f3 , f4 , f5}; 
+
+--define BN with control parameters
+Fcontrol=apply(numvars,k->(UP_k+1)*F_k+UP_k);
+
+-----------------------------------------------------------------------
+-- ### create equations / set restrictions ###
+I=ideal( join(Fcontrol-X,{x3}));
+
+GB=gens gb I
+GB1=flatten entries GB
+
+-----------------------------------------------------------------------
+-- ### Find generators that only contain parameters ###
+EQUATIONS=select(GB1,P->(S:=support(P); set {}===(set S)*set(X) and P!=0));
+Ring2=ZZ/2[join(X,UP)/value];
+CONTROLS=(EQUATIONS/toString/value)/factor;
+
+--list all control policies
+toString toList CONTROLS
+
+
+
+	  
+####################################### ONLY KNOCKOUT ########################################################	  
+
+numvars=5;
+--variables x and controls um=u-
+X=apply(numvars,i->"x"|(i+1));
+UM=apply(numvars,i->"um"|(i+1));
+
+--define ring
+DEN=apply(join(X,UM),v->v|"^2-"|v);
+R=ZZ/2[join(X,UM)/value,MonomialOrder=>Lex]/ideal(DEN/value);
+X=X/value; UM=UM/value; 
+RingElement | RingElement :=(x,y)->x+y+x*y;
+RingElement & RingElement :=(x,y)->x*y;
+
+-----------------------------------------------------------------------
+-- ###define BN using functions above ###
+F = {f1 , f2 , f3 , f4 , f5}; 
+ 
+--define BN with control parameters
+Fcontrol=apply(numvars,k->(UM_k+1)*F_k);
+
+-----------------------------------------------------------------------
+-- ### create equations / set restrictions ###
+I=ideal( join(Fcontrol-X,{x3}));
+
+GB=gens gb I
+GB1=flatten entries GB
+
+-----------------------------------------------------------------------
+-- ### Find generators that only contain parameters ###
+EQUATIONS=select(GB1,P->(S:=support(P); set {}===(set S)*set(X) and P!=0));
+Ring2=ZZ/2[join(X,UM)/value];
+CONTROLS=(EQUATIONS/toString/value)/factor;
+
+--list all control policies
+toString toList CONTROLS

@@ -1,0 +1,134 @@
+-- Written by Daniel Plaugher 09/12/22, adapted from DM
+-- code is for Thesis CA edge examples
+
+
+n=5;
+
+-- ### define edges ###
+VARSstring={{"x3","x5"},
+{"x1","x4"},
+{"x2"},
+{"x3"},
+{"x4"}
+};
+
+
+-- ### uji denote parameters from xi to xj ###
+PARSstring={{"u_(3,1)","u_(5,1)"},
+{"u_(1,2)","u_(4,2)"},
+{"u_(2,3)"},
+{"u_(3,4)"},
+{"u_(4,5)"}
+};
+
+
+-----------------------------------------------------------------------
+-- *** use this section to limit edges, or uncomment PARSselected ***
+-- PARSselected=PARSstring;
+
+-- *** for thesis EQ 4.6 ***
+PARSselected={{"u_(3,1)","u_(5,1)"},
+{"u_(1,2)-u_(1,2)","u_(4,2)-u_(4,2)"},
+{"u_(2,3)"},
+{"u_(3,4)-u_(3,4)"},
+{"u_(4,5)-u_(4,5)"}
+};
+
+
+-- *** for thesis EQ 4.8 ***
+PARSselected={{"u_(3,1)","u_(5,1)"},
+{"u_(1,2)-u_(1,2)","u_(4,2)-u_(4,2)"},
+{"u_(2,3)-u_(2,3)"},
+{"u_(3,4)"},
+{"u_(4,5)"}
+};
+
+
+-----------------------------------------------------------------------
+-- ### define ring ###
+Xstring=apply(n,i->"x"|(i+1));
+DEN=apply(join(Xstring,flatten PARSstring),v->v|"^2-"|v)
+R=ZZ/2[join(Xstring,flatten PARSstring)/value]/ideal(DEN/value);
+--PARS=apply(n, i-> (PARSstring_i)/value);
+PARS=apply(n, i-> (PARSselected_i)/value);
+VARS=apply(n, i-> (VARSstring_i)/value);
+--H=Hstring/value; 
+
+RingElement | RingElement :=(x,y)->x+y+x*y;
+RingElement & RingElement :=(x,y)->x*y;
+
+
+-----------------------------------------------------------------------
+--### define Boolean network ###
+f1 = 1+x3+x5+x3*x5;
+f2 = 1+x1+x1*x4;
+f3 = 1+x2;
+f4 = x3;
+f5 = 1+x4;
+
+--F=apply(numvars,i->"f"|(i+1));
+F = {f1 , f2 , f3 , f4 , f5};
+Xstring=Xstring/value;
+
+-- ### find fixed points ###
+Ifp=ideal(F-Xstring);
+GBfp=gens gb Ifp
+
+
+-----------------------------------------------------------------------
+-- ### encoding the edge controls ###
+H=F;
+HPAR={};
+for k from 0 to n-1 do ( X:=VARS_k; P:=PARS_k;
+    SUBS:=apply(#X, i->(
+      X_i=>(P_i+1)*X_i
+--	X_i=>(P_i+1)*X_i+P_i  --*** uncomment for edge expression
+        )
+    );
+    HPAR=append(HPAR,sub(H_k,SUBS));
+)
+
+
+-----------------------------------------------------------------------
+--### define good/bad states ###
+GOODSTATE={{1,1,1,1,0}};
+BADSTATE={{0,1,1,0,1}};
+
+
+-----------------------------------------------------------------------
+-- ### for blocking ###
+EQNS2={}; 
+for k from 0 to #BADSTATE-1 do (x:=BADSTATE_k;
+    S:=apply(n,i->(Xstring_i=>x_i));
+    HPARx:=apply(HPAR,hi->sub(hi,S)+1);
+    EQNS2=join(EQNS2,flatten(HPARx-x));    
+); 
+EQNS2
+I2=ideal(EQNS2);
+GB=gens gb I2
+
+
+
+-----------------------------------------------------------------------
+-- ### for creating a new fixed point ###
+EQNS3={}; 
+for k from 0 to #GOODSTATE-1 do (x:=GOODSTATE_k;
+    S:=apply(n,i->(Xstring_i=>x_i));
+    HPARx:=apply(HPAR,hi->sub(hi,S));
+    EQNS3=join(EQNS3,flatten(HPARx-x));    
+); 
+EQNS3
+I3=ideal(EQNS3);
+GB=gens gb I3
+
+
+-----------------------------------------------------------------------
+-- ### Find generators that only contain parameters ###
+-- *** step is only needed if x values are present ***
+GB1=flatten entries GB
+EQUATIONS=select(GB,P->(S:=support(P); set {}===(set S)*set(X) and P!=0));
+Ring2=ZZ/2[join(X,UP,UM)/value];
+CONTROLS=(EQUATIONS/toString/value)/factor;
+
+--list all control policies
+toString toList CONTROLS

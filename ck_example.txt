@@ -1,0 +1,6 @@
+x1 = NOT x4
+x2 = x1
+x3 = x1
+x4 = NOT x5
+x5 = x3 AND x6
+x6 = x2
