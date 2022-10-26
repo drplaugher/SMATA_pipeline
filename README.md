@@ -16,8 +16,8 @@ Phenotype control example files:
 <br />
 
  *How-To* files that detail how to find controls and simulate:
-- How-To find controls
-- How-To simulate
+- Guide for Controls
+- How-To Simulate
 
 
 <br />
