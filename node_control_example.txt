@@ -1,4 +1,4 @@
--- Written by Daniel Plaugher 09/12/22, adapted from DM
+-- Written by Daniel Plaugher 11/14/22, adapted from DM
 -- code is for Thesis CA node examples
 
 
@@ -21,7 +21,7 @@ RingElement & RingElement :=(x,y)->x*y;
 --### define Boolean network ###
 f1 = 1+x3+x5+x3*x5;
 f2 = 1+x1+x1*x4;
-f3 = 1+x2;
+f3 = x2*x5+x2+1;
 f4 = x3;
 f5 = 1+x4;
 
@@ -36,7 +36,7 @@ GBfp=gens gb Ifp
 
 -----------------------------------------------------------------------
 -- ## define knockout/knockin to remove ###
--- %%%%% use for thesis eq 4.10, otherwise  can SKIP %%%%%
+-- %%%%% use for thesis eq 3.10, otherwise  can SKIP %%%%%
 UP=delete(up1,UP); UP=insert(0,0,UP);
 UP=delete(up2,UP); UP=insert(1,0,UP);
 UP=delete(up5,UP); UP=insert(4,0,UP);
@@ -53,10 +53,10 @@ Fcontrol=apply(numvars,k->(UP_k+UM_k+1)*F_k+UP_k);
 
 -----------------------------------------------------------------------
 -- ### create equations/set restrictions for region blocking ###
--- %%%%% can use for thesis eq 4.7 %%%%%
+-- %%%%% can use for thesis eq 3.7 %%%%%
 I=ideal( join(Fcontrol-X, {x1+1,x3+1, x4+1}));
 
--- %%%%% use for thesis eq 4.10 %%%%%
+-- %%%%% use for thesis eq 3.10 %%%%%
 I=ideal( join(Fcontrol-X, {x3}));
 
 GB=gens gb I
@@ -65,7 +65,7 @@ GB1=flatten entries GB
 
 -----------------------------------------------------------------------
 -- ### for creating a new fixed point ###
--- %%%%% use for thesis eq 4.7 %%%%%
+-- %%%%% use for thesis eq 3.7 %%%%%
 GOODSTATE={{1,1,1,1,0}};
 EQNS3={}; 
 for k from 0 to #GOODSTATE-1 do (x:=GOODSTATE_k;

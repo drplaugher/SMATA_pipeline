@@ -1,4 +1,4 @@
--- Written by Daniel Plaugher 09/12/22, adapted from DM
+-- Written by Daniel Plaugher 11/14/22, adapted from DM
 -- code is for Thesis CA edge examples
 
 
@@ -7,7 +7,7 @@ n=5;
 -- ### define edges ###
 VARSstring={{"x3","x5"},
 {"x1","x4"},
-{"x2"},
+{"x2","x5"},
 {"x3"},
 {"x4"}
 };
@@ -16,7 +16,7 @@ VARSstring={{"x3","x5"},
 -- ### uji denote parameters from xi to xj ###
 PARSstring={{"u_(3,1)","u_(5,1)"},
 {"u_(1,2)","u_(4,2)"},
-{"u_(2,3)"},
+{"u_(2,3)","u_(5,3)"},
 {"u_(3,4)"},
 {"u_(4,5)"}
 };
@@ -26,19 +26,19 @@ PARSstring={{"u_(3,1)","u_(5,1)"},
 -- *** use this section to limit edges, or uncomment PARSselected ***
 -- PARSselected=PARSstring;
 
--- *** for thesis EQ 4.6 ***
+-- *** for thesis EQ 3.6 ***
 PARSselected={{"u_(3,1)","u_(5,1)"},
 {"u_(1,2)-u_(1,2)","u_(4,2)-u_(4,2)"},
-{"u_(2,3)"},
+{"u_(2,3)","u_(5,3)-u_(5,3)"},
 {"u_(3,4)-u_(3,4)"},
 {"u_(4,5)-u_(4,5)"}
 };
 
 
--- *** for thesis EQ 4.8 ***
+-- *** for thesis EQ 3.8 ***
 PARSselected={{"u_(3,1)","u_(5,1)"},
 {"u_(1,2)-u_(1,2)","u_(4,2)-u_(4,2)"},
-{"u_(2,3)-u_(2,3)"},
+{"u_(2,3)-u_(2,3)","u_(5,3)-u_(5,3)"},
 {"u_(3,4)"},
 {"u_(4,5)"}
 };
@@ -62,7 +62,7 @@ RingElement & RingElement :=(x,y)->x*y;
 --### define Boolean network ###
 f1 = 1+x3+x5+x3*x5;
 f2 = 1+x1+x1*x4;
-f3 = 1+x2;
+f3 = x2*x5+x2+1;
 f4 = x3;
 f5 = 1+x4;
 
@@ -92,7 +92,7 @@ for k from 0 to n-1 do ( X:=VARS_k; P:=PARS_k;
 -----------------------------------------------------------------------
 --### define good/bad states ###
 GOODSTATE={{1,1,1,1,0}};
-BADSTATE={{0,1,1,0,1}};
+BADSTATE={{0,1,1,1,1}};
 
 
 -----------------------------------------------------------------------
@@ -101,7 +101,7 @@ EQNS2={};
 for k from 0 to #BADSTATE-1 do (x:=BADSTATE_k;
     S:=apply(n,i->(Xstring_i=>x_i));
     HPARx:=apply(HPAR,hi->sub(hi,S)+1);
-    EQNS2=join(EQNS2,flatten(HPARx-x));    
+    EQNS2=join(EQNS2,flatten(HPARx));    
 ); 
 EQNS2
 I2=ideal(EQNS2);
